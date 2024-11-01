@@ -27,7 +27,14 @@ CREATE OR REFRESH STREAMING LIVE TABLE user_reviews_bronze_clean
     reaction_type IN('neutral','like','dislike')
   ) ON VIOLATION DROP ROW
 ) AS
-SELECT * FROM STREAM(pl_lounas_bot.user_reviews.user_reviews_bronze);
+SELECT 
+  id
+  ,user_id
+  ,message_id
+  ,reaction_type
+  ,created_at
+  ,restaurant_name
+FROM STREAM(pl_lounas_bot.user_reviews.user_reviews_bronze);
 
 -- COMMAND ----------
 
@@ -48,6 +55,27 @@ APPLY CHANGES INTO LIVE.user_reviews_silver
   KEYS (id)
   APPLY AS DELETE WHEN 1=2
   SEQUENCE BY created_at
+
+-- COMMAND ----------
+
+-- MAGIC %md
+-- MAGIC ### USER_REVIEWS_GOLD
+-- MAGIC - **Source:** USER_REVIEWS_SILVER
+-- MAGIC
+-- MAGIC Käytännössä samat tiedot kuin USER_REVIEWS_SILVER, mutta gold-tauluna mahdollisia tulevia tarpeita varten.
+
+-- COMMAND ----------
+
+CREATE OR REFRESH LIVE TABLE user_reviews_gold AS
+SELECT
+  id
+  ,user_id
+  ,message_id
+  ,reaction_type
+  ,created_at
+  ,restaurant_name
+FROM
+  LIVE.user_reviews_silver
 
 -- COMMAND ----------
 
