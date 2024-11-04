@@ -72,8 +72,11 @@ SELECT
   ,user_id
   ,message_id
   ,reaction_type
-  ,created_at
   ,restaurant_name
+  ,created_at
+  ,year(created_at) AS year
+  ,month(created_at) AS month
+  ,day(created_at) AS day
 FROM
   LIVE.user_reviews_silver
 
