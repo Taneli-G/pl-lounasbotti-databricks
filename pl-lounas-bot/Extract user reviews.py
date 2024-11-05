@@ -49,8 +49,8 @@ remote_table.createOrReplaceTempView('user_reviews_src')
 #source_table_name = "user_reviews"
 #target_table_name = "pl_lounas_bot.user_reviews.user_reviews_bronze"
 
-dbutils.widgets.text("user_reviews.target_table_name", "pl_lounas_bot.user_reviews.user_reviews_bronze")
-dbutils.widgets.text("user_reviews.source_table_name", "user_reviews"")
+dbutils.widgets.text("user_reviews_target_table_name", "pl_lounas_bot.user_reviews.user_reviews_bronze")
+dbutils.widgets.text("user_reviews_source_table_name", "user_reviews")
 #spark.conf.set("user_reviews.target_table_name", target_table_name)
 #spark.conf.set("user_reviews.source_table_name", source_table_name)
 
@@ -66,10 +66,10 @@ dbutils.widgets.text("user_reviews.source_table_name", "user_reviews"")
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC CREATE OR REPLACE TEMP VIEW IDENTIFIER(:user_reviews.source_table_name) AS 
+# MAGIC CREATE OR REPLACE TEMP VIEW IDENTIFIER(:user_reviews_source_table_name) AS 
 # MAGIC SELECT * FROM user_reviews_src;
 # MAGIC
-# MAGIC CREATE TABLE IF NOT EXISTS IDENTIFIER(:user_reviews.target_table_name) (
+# MAGIC CREATE TABLE IF NOT EXISTS IDENTIFIER(:user_reviews_target_table_name) (
 # MAGIC   id INT
 # MAGIC   ,user_id BIGINT
 # MAGIC   ,message_id BIGINT
@@ -78,8 +78,8 @@ dbutils.widgets.text("user_reviews.source_table_name", "user_reviews"")
 # MAGIC   ,restaurant_name STRING
 # MAGIC );
 # MAGIC
-# MAGIC MERGE INTO IDENTIFIER(:user_reviews.target_table_name) trg
-# MAGIC USING IDENTIFIER(:user_reviews.source_table_name) src
+# MAGIC MERGE INTO IDENTIFIER(:user_reviews_target_table_name) trg
+# MAGIC USING IDENTIFIER(:user_reviews_source_table_name) src
 # MAGIC ON src.id = trg.id AND src.created_at = trg.created_at
 # MAGIC WHEN NOT MATCHED 
 # MAGIC   THEN INSERT *;
